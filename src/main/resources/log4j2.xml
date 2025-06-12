@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration >
+    <Properties>
+        <!-- 로그 파일 이름 -->
+        <Property name="logFileName">Log</Property>
+
+        <!-- 로그 레이아웃 패턴 -->
+        <Property name="layoutPattern">[%d{yyyy-MM-dd HH:mm:ss.SSS}][%thread][%-5level][%c{1}]%msg%n</Property>
+
+        <!-- 로그 저장 디렉토리 경로 -->
+        <Property name="logDirectoryPath">log</Property>
+
+        <!-- 로그 파일 갯수 -->
+        <Property name="logFileCount">30</Property>
+    </Properties>
+    <Appenders>
+
+        <!-- 콘솔 출력 Appender -->
+        <Console name="Console_Appender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${layoutPattern}"/>
+        </Console>
+
+        <!-- 파일 저장 Appender -->
+        <RollingFile name="File_Appender" fileName="${logDirectoryPath}/${logFileName}.log" filePattern="${logDirectoryPath}/${logFileName}_%d{yyyy-MM-dd}.log.gz">
+            <PatternLayout pattern="${layoutPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logDirectoryPath}" maxDepth="1">
+                    <IfAccumulatedFileCount exceeds="${logFileCount}"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+
+        <!-- Spring Framework -->
+        <Logger name="org.springframework" level="OFF" additivity="false">
+            <AppenderRef ref="Console_Appender" />
+            <AppenderRef ref="File_Appender"/>
+        </Logger>
+
+        <!-- Root 로거 -->
+        <Root level="INFO" additivity="false">
+            <AppenderRef ref="Console_Appender"/>
+            <AppenderRef ref="File_Appender"/>
+        </Root>
+
+    </Loggers>
+</Configuration>
